@@ -1,38 +1,36 @@
 import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
 import './App.css';
-import Rive from '@rive-app/react-canvas';
+import { useRive } from '@rive-app/react-canvas';
 import vehiclesRive from './assets/animations/vehicles.riv';
 
 function App() {
-  const [count, setCount] = useState(0);
+  const { rive, RiveComponent } = useRive({
+    src: vehiclesRive,
+    stateMachines: 'bumpy',
+    autoplay: true,
+  });
+
+  const [pause, setPause] = useState(false);
+
+  const togglePause = () => {
+    if (!rive) return;
+
+    setPause(!pause);
+
+    if (pause) {
+      rive.play();
+    } else {
+      rive.pause();
+    }
+  };
 
   return (
     <>
-      <div>
-        <a href='https://vite.dev' target='_blank'>
-          <img src={viteLogo} className='logo' alt='Vite logo' />
-        </a>
-        <a href='https://react.dev' target='_blank'>
-          <img src={reactLogo} className='logo react' alt='React logo' />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className='card'>
-        <button onClick={() => setCount(count => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className='read-the-docs'>
-        Click on the Vite and React logos to learn more
-      </p>
-      <div style={{ width: '100vw', height: '50vh' }}>
-        <Rive src={vehiclesRive} stateMachines='bumpy' />
-      </div>
+      <button onClick={togglePause}>{pause ? 'Resume' : 'Pause'}</button>
+      <RiveComponent
+        onClick={togglePause}
+        style={{ width: '80vw', height: '50vh' }}
+      />
     </>
   );
 }
